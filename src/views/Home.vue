@@ -117,6 +117,7 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import wordCloud from "echarts-wordcloud";
+import Qs from 'qs';
 export default {
   data() {
     return {
@@ -250,13 +251,12 @@ export default {
         category: title2,
       };
       if (title == "") {
-        that.$message.error("请输入关键字！");
+        that.$message.error("请输入关键字！")
       } else {
-        console.log(data)
         that.axios
-          .post("/search",data)
+          .post("/search",Qs.stringify(data),{emulateJSON:true})
           .then((res) => {
-            let lw_data = res.data;
+            let lw_data = res.data
             console.log(lw_data)
           })
           .catch((err) => {
