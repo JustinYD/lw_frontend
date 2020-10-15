@@ -8,7 +8,7 @@ import echarts from "echarts";
 Vue.prototype.$echarts = echarts;
 import dataV from '@jiaminghi/data-view'
 // eslint-disable-next-line no-unused-vars
-import Qs from 'qs';
+
 Vue.use(ElementUI);
 Vue.use(dataV)
 Vue.config.productionTip = false

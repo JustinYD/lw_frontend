@@ -40,6 +40,7 @@
             </el-select>
           </div>
         </el-col>
+        <!--
         <el-col :span="3" class="search">
           <div>
             <el-select v-model="keywords_2" size="small" clearable placeholder="请选择方向">
@@ -52,6 +53,7 @@
             </el-select>
           </div>
         </el-col>
+        -->
         <el-col :span="2" class="search">
           <el-tooltip class="item" effect="dark" content="搜索" placement="bottom">
             <el-button size="small" icon="el-icon-search" circle @click="search"></el-button>
@@ -84,7 +86,7 @@
         </el-col>
         <el-col :span="10">
           <dv-border-box-13>
-            <div id="chart_major" style="width:700px;height:440px;margin:0 auto"></div>
+            <div id="chart_major" style="width:100%;height:440px;margin:0 auto"></div>
             <!--<dv-charts :option="chart" style="width:450px;height:300px;margin:0 auto" />-->
           </dv-border-box-13>
         </el-col>
@@ -92,7 +94,7 @@
           <dv-border-box-1>
             <div
               id="wordcloud"
-              style="width:400px;height:440px;margin:0 auto;padding:10px;box-sizing: border-box"
+              style="width:100%;height:440px;margin:0 auto;padding:10px;box-sizing: border-box"
             ></div>
           </dv-border-box-1>
         </el-col>
@@ -107,7 +109,7 @@
 
         <el-col :span="6">
           <dv-border-box-8 :reverse="true">
-            <dv-capsule-chart :config="config_1" style="width:300px;height:400px;margin:0 auto" />
+            <dv-capsule-chart :config="config_1" style="width:100%;height:400px;margin:0 auto" />
           </dv-border-box-8>
         </el-col>
       </el-row>
@@ -117,7 +119,7 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import wordCloud from "echarts-wordcloud";
-import Qs from 'qs';
+import Qs from "qs";
 export default {
   data() {
     return {
@@ -251,13 +253,40 @@ export default {
         category: title2,
       };
       if (title == "") {
-        that.$message.error("请输入关键字！")
+        that.$message.error("请输入关键字！");
       } else {
         that.axios
-          .post("/search",Qs.stringify(data),{emulateJSON:true})
+          .post("/search", Qs.stringify(data), { emulateJSON: true })
           .then((res) => {
-            let lw_data = res.data
-            console.log(lw_data)
+            let lw_data = res.data.lw20;
+            let lw_excel = res.data.lw_excel;
+            let lw_sum=res.data.lw_sum;
+            let lw_excellent=res.data.lw_excel_sum;
+            let list = [];
+            let list_excel = [];
+            for (let i = 0; i < lw_data.length; i++) {
+              list.push({ name: lw_data[i][0], value: lw_data[i][1] });
+            }
+            for (let i = 0; i < lw_excel.length; i++) {
+              list_excel.push([lw_excel[i][0], lw_excel[i][1], lw_excel[i][2]]);
+            }
+            that.sum = {
+              data: [lw_sum],
+              formatter: "论文{value}篇",
+            };
+            that.excellent = {
+              data: [lw_excellent],
+              formatter: "优秀论文{value}篇",
+            };
+            that.config = { data: list, unit: "分" };
+            that.config_2 = {
+              data: list_excel,
+              header: ["名字", "论文题目", "专业"],
+              columnWidth: [70, 300, 240],
+              evenRowBGC: "rgb(7, 3, 24)",
+              headerBGC: "#1370fb",
+              carousel: "page",
+            };
           })
           .catch((err) => {
             //请求失败就会捕获报错信息
